@@ -17,39 +17,22 @@ import java.util.Date;
 public class UserController {
     @PostMapping
     public ResponseData<?> addUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
-        try {
-            return new ResponseData<>(HttpStatus.OK.value(), "User added successfully", 1);
-            // throw new RuntimeException("Error something went wrong");
-        } catch (Exception e) {
-            return new ResponseError<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        }
+        return new ResponseData<>(HttpStatus.OK.value(), "User added successfully", 1);
     }
 
     @PutMapping("/{id}")
     public ResponseData<?> updateUser(@PathVariable String id, @RequestBody UserRequestDTO userRequestDTO) {
-        try {
-            return new ResponseData<>(HttpStatus.OK.value(), "User updated successfully");
-        } catch (Exception e) {
-            return new ResponseError<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        }
+        return new ResponseData<>(HttpStatus.OK.value(), "User updated successfully");
     }
 
     @PatchMapping("/{id}")
     public ResponseData<?> changeStatus(@PathVariable int id, @RequestParam boolean status) {
-        try {
-            return new ResponseData<>(HttpStatus.OK.value(), String.format("User status changed to %b", status));
-        } catch (Exception e) {
-            return new ResponseError<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        }
+        return new ResponseData<>(HttpStatus.OK.value(), String.format("User status changed to %b", status));
     }
 
     @DeleteMapping("/{id}")
     public ResponseData<?> deleteUser(@PathVariable int id) {
-        try {
-            return new ResponseData<>(HttpStatus.OK.value(), String.format("User deleted successfully with id %d", id));
-        } catch (Exception e) {
-            return new ResponseError<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        }
+        return new ResponseData<>(HttpStatus.OK.value(), String.format("User deleted successfully with id %d", id));
     }
 
     @GetMapping("/{id}")
@@ -62,12 +45,6 @@ public class UserController {
                 .gender("male")
                 .dateOfBirth(new Date())
                 .build();
-        try {
-            return new ResponseData<>(HttpStatus.OK.value(), "Request get user successfully", user);
-        } catch (Exception e) {
-            return new ResponseError<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        }
+        return new ResponseData<>(HttpStatus.OK.value(), "Request get user successfully", user);
     }
-
-
 }
