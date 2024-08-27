@@ -1,13 +1,19 @@
 package com.javatech.controller;
 
 import com.javatech.dto.UserRequestDTO;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping("api/v1/user")
+@Validated
 public class UserController {
     @PostMapping
-    public String addUser(@RequestBody UserRequestDTO userRequestDTO) {
+    public String addUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
         return "User added";
     }
 
@@ -27,12 +33,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserRequestDTO getUser(@PathVariable int id) {
+    public UserRequestDTO getUser(@PathVariable @Min(1) int id) {
         return UserRequestDTO.builder()
                 .email("nonghoangvu04@gmail.com")
                 .phone("+84 777 04 085")
                 .firstName("Vu")
                 .lastName("Nong Hoang")
+                .dateOfBirth(new Date())
                 .build();
     }
 
