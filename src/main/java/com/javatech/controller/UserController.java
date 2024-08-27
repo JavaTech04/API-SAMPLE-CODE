@@ -1,6 +1,6 @@
 package com.javatech.controller;
 
-import com.javatech.dto.UserRequestDTO;
+import com.javatech.dto.requests.UserRequestDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.validation.annotation.Validated;

@@ -1,4 +1,4 @@
-package com.javatech.utils;
+package com.javatech.dto.validate;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

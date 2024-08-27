@@ -1,9 +1,7 @@
-package com.javatech.utils;
+package com.javatech.dto.validate;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-
-import java.lang.annotation.Annotation;
 
 public class PhoneValidator implements ConstraintValidator<PhoneNumber, String> {
 
