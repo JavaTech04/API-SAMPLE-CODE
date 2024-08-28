@@ -1,5 +1,6 @@
 package com.javatech.controller;
 
+import com.javatech.configuration.Translator;
 import com.javatech.dto.requests.UserRequestDTO;
 import com.javatech.dto.response.ResponseData;
 import com.javatech.dto.response.ResponseError;
@@ -17,29 +18,29 @@ import java.util.Date;
 public class UserController {
     @PostMapping
     public ResponseData<?> addUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
-        return new ResponseData<>(HttpStatus.OK.value(), "User added successfully", 1);
+        return new ResponseData<>(HttpStatus.OK.value(), Translator.toLocale("user.add.success"), 1);
     }
 
     @PutMapping("/{id}")
     public ResponseData<?> updateUser(@PathVariable String id, @RequestBody UserRequestDTO userRequestDTO) {
-        return new ResponseData<>(HttpStatus.OK.value(), "User updated successfully");
+        return new ResponseData<>(HttpStatus.OK.value(), Translator.toLocale("user.update.success"));
     }
 
     @PatchMapping("/{id}")
     public ResponseData<?> changeStatus(@PathVariable int id, @RequestParam boolean status) {
-        return new ResponseData<>(HttpStatus.OK.value(), String.format("User status changed to %b", status));
+        return new ResponseData<>(HttpStatus.OK.value(), Translator.toLocale("user.changeStatus.success"));
     }
 
     @DeleteMapping("/{id}")
     public ResponseData<?> deleteUser(@PathVariable int id) {
-        return new ResponseData<>(HttpStatus.OK.value(), String.format("User deleted successfully with id %d", id));
+        return new ResponseData<>(HttpStatus.OK.value(), Translator.toLocale("user.delete.success"));
     }
 
     @GetMapping("/{id}")
     public ResponseData<?> getUser(@PathVariable @Min(1) int id) {
         UserRequestDTO user = UserRequestDTO.builder()
                 .email("nonghoangvu04@gmail.com")
-                .phone("+84 777 04 085")
+                .phone("0123456789")
                 .firstName("Vu")
                 .lastName("Nong Hoang")
                 .gender("male")
