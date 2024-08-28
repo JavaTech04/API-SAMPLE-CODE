@@ -1,6 +1,19 @@
 server:
   port: 2004
 spring:
+  application:
+    name: StaffManager
+  datasource:
+    url: jdbc:mysql://localhost:3306/api_sample_code
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123
+  jpa:
+    show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: none
   config:
     activate:
       on-profile: dev

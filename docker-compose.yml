@@ -1,6 +1,18 @@
 version: '3.9'
 
 services:
+  mysql:
+    image: image
+    container_name: mysql_container
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+
   api-service-dev:
     container_name: api-container-dev
     image: api-image
@@ -43,3 +55,5 @@ services:
 networks:
   backend:
     driver: bridge
+volumes:
+  mysql-data:
