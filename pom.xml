@@ -55,6 +55,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!--Necessary for this article-->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
