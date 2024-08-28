@@ -1,0 +1,4 @@
+mvn clean package -P dev|test|prod
+
+run:
+java -jar .\target\API_Sample_Code-0.0.1-SNAPSHOT.jar
