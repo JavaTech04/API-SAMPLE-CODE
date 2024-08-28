@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  api-service-dev:
+    container_name: api-container-dev
+    image: api-image
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - '8080:2004'
+    env_file:
+      - .env
+    networks:
+      - backend
+
+#  api-service-test:
+#    container_name: api-container-test
+#    image: api-image
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    ports:
+#      - '8081:2004'
+#    env_file:
+#      - test.env
+#    networks:
+#      - backend
+#
+#  api-service-prod:
+#    container_name: api-container-prod
+#    image: api-image
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    ports:
+#      - '8082:2004'
+#    env_file:
+#      - prod.env
+#    networks:
+#      - backend
+
+networks:
+  backend:
+    driver: bridge
