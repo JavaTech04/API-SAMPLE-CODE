@@ -1,26 +1,19 @@
 package com.javatech.service.impl;
 
 import com.javatech.dto.requests.UserRequestDTO;
-import com.javatech.dto.response.PageResponse;
-import com.javatech.dto.response.UserDetailResponse;
+import com.javatech.dto.response.*;
 import com.javatech.exception.ResourceNotFoundException;
-import com.javatech.model.Address;
-import com.javatech.model.User;
-import com.javatech.repository.UserRepository;
+import com.javatech.model.*;
+import com.javatech.repository.*;
 import com.javatech.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.*;
 
 import static com.javatech.utils.AppConst.SORT_BY;
 
@@ -28,7 +21,10 @@ import static com.javatech.utils.AppConst.SORT_BY;
 @Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
+
+    private final SearchRepository repository;
 
     /**
      * @param request
@@ -196,6 +192,18 @@ public class UserServiceImpl implements UserService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(orders));
         Page<User> user = this.userRepository.findAll(pageable);
         return converToPageResponse(user, pageable);
+    }
+
+    /**
+     * @param pageNo
+     * @param pageSize
+     * @param search
+     * @param sortBy
+     * @return
+     */
+    @Override
+    public PageResponse<?> getAllUsersAndSearchWithPagingAndSorting(int pageNo, int pageSize, String search, String sortBy) {
+        return this.repository.getAllUsersAndSearchWithPagingAndSorting(pageNo, pageSize, search, sortBy);
     }
 
     /**
