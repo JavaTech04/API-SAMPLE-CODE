@@ -206,6 +206,11 @@ public class UserServiceImpl implements UserService {
         return this.repository.getAllUsersAndSearchWithPagingAndSorting(pageNo, pageSize, search, sortBy);
     }
 
+    @Override
+    public PageResponse<?> advanceSearchWithCriteria(int pageNo, int pageSize, String sortBy, String address, String... search) {
+        return this.repository.searchUserByCriteria(pageNo, pageSize, sortBy, address, search);
+    }
+
     /**
      * @param user
      * @param pageable

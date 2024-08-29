@@ -18,7 +18,7 @@ import static com.javatech.utils.AppConst.SORT_BY;
 @Slf4j
 @Component
 public class SearchRepository {
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -87,6 +87,26 @@ public class SearchRepository {
                 .size(pageSize)
                 .totalPages(page.getTotalPages())
                 .items(page.stream().toList())
+                .build();
+    }
+
+    public PageResponse<?> searchUserByCriteria(int pageNo, int pageSize, String sortBy, String address, String... search) {
+        log.info("Search user with search={} and sortBy={}", search, sortBy);
+        // firstName:T, lastName:T
+
+        // TODO 13:30
+        // https://github.dev/luongquoctay87/tayjava-sample-code/tree/spring-data-jpa
+
+        // Get list of users
+
+
+        // Count users
+
+        return PageResponse.builder()
+                .page(pageNo)
+                .size(pageSize)
+                .totalPages(0)
+                .items(null)
                 .build();
     }
 }
