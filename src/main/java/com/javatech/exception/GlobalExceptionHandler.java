@@ -37,12 +37,12 @@ public class GlobalExceptionHandler {
         return response;
     }
 
-    @ExceptionHandler({MethodArgumentTypeMismatchException.class, ResourceNotFoundException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class, ResourceNotFoundException.class, IllegalArgumentException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionResponse handleInternalServerException(Exception ex, WebRequest request) {
         ExceptionResponse response = new ExceptionResponse();
         response.setTimestamp(new Date());
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         response.setPath(request.getDescription(false).replace("uri=", ""));
 
         if (ex instanceof MethodArgumentTypeMismatchException) {
@@ -51,6 +51,10 @@ public class GlobalExceptionHandler {
         } else if (ex instanceof ResourceNotFoundException) {
             response.setError("Internal Server Error");
             response.setMessage("Something went wrong");
+        } else if (ex instanceof IllegalArgumentException) {
+            response.setError("Payload invalid");
+            response.setMessage("Property must not be null or empty");
+
         }
         return response;
     }

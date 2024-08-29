@@ -1,9 +1,11 @@
 package com.javatech.service;
 
 import com.javatech.dto.requests.UserRequestDTO;
+import com.javatech.dto.response.PageResponse;
 import com.javatech.dto.response.UserDetailResponse;
 
 public interface UserService {
+
     long saveUser(UserRequestDTO request);
 
     void updateUser(long userId, UserRequestDTO request);
@@ -14,4 +16,7 @@ public interface UserService {
 
     UserDetailResponse getUser(long userId);
 
+    PageResponse<?> getAllUsersWithSortBy(int pageNo, int pageSize, String sortBy);
+
+    PageResponse<?> getAllUsersWithSortByMultipleColumns(int pageNo, int pageSize, String... sorts);
 }

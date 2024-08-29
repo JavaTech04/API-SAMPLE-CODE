@@ -63,10 +63,10 @@ public class User extends AbstractEntity {
 
     public void saveAddress(Address address) {
         if (address != null) {
-            if (addresses == null) {
-                addresses = new HashSet<>();
+            if (this.addresses == null) {
+                this.addresses = new HashSet<>();
             }
-            addresses.add(address);
+            this.addresses.add(address);
             address.setUser(this); // save user_id
         }
     }
