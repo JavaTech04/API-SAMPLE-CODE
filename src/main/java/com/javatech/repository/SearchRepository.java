@@ -1,19 +1,25 @@
 package com.javatech.repository;
 
 import com.javatech.dto.response.PageResponse;
+import com.javatech.model.Address;
+import com.javatech.model.User;
+import com.javatech.repository.criteria.SearchCriteria;
+import com.javatech.repository.criteria.UserSearchQueryCriteriaConsumer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.javatech.utils.AppConst.SORT_BY;
+import static com.javatech.utils.AppConst.*;
 
 @Slf4j
 @Component
@@ -90,23 +96,113 @@ public class SearchRepository {
                 .build();
     }
 
+    /**
+     * @param pageNo
+     * @param pageSize
+     * @param sortBy
+     * @param address
+     * @param search
+     * @return
+     */
     public PageResponse<?> searchUserByCriteria(int pageNo, int pageSize, String sortBy, String address, String... search) {
         log.info("Search user with search={} and sortBy={}", search, sortBy);
         // firstName:T, lastName:T
 
-        // TODO 13:30
-        // https://github.dev/luongquoctay87/tayjava-sample-code/tree/spring-data-jpa
-
+        List<SearchCriteria> criteriaList = new ArrayList<>();
         // Get list of users
-
-
+        if (search.length > 0) {
+            Pattern pattern = Pattern.compile(SEARCH_OPERATOR);
+            for (String s : search) {
+                // firstName:value
+                Matcher matcher = pattern.matcher(s);
+                if (matcher.find()) {
+                    criteriaList.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+                }
+            }
+        }
         // Count users
+        List<User> user = getUsers(pageNo, pageSize, criteriaList, sortBy, address);
+
+        Long totalElements = getTotalElements(criteriaList, address);
 
         return PageResponse.builder()
                 .page(pageNo)
                 .size(pageSize)
-                .totalPages(0)
-                .items(null)
+                .totalPages(totalElements.intValue())
+                .items(user)
                 .build();
+    }
+
+    /**
+     * @param pageNo
+     * @param pageSize
+     * @param criteriaList
+     * @param sortBy
+     * @param address
+     * @return
+     */
+    private List<User> getUsers(int pageNo, int pageSize, List<SearchCriteria> criteriaList, String sortBy, String address) {
+        log.info("-------------- Get Users --------------");
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> query = criteriaBuilder.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+        // Handling search conditions
+        Predicate predicate = criteriaBuilder.conjunction();
+        UserSearchQueryCriteriaConsumer queryCustomer = new UserSearchQueryCriteriaConsumer(predicate, criteriaBuilder, root);
+        if (StringUtils.hasLength(address)) {
+            Join<Address, User> addressUserJoin = root.join("addresses");
+            Predicate addressPredicate = criteriaBuilder.like(addressUserJoin.get("city"), "%" + address + "%");
+            query.where(predicate, addressPredicate);
+            // find all field of address ???
+        } else {
+            criteriaList.forEach(queryCustomer);
+            predicate = queryCustomer.getPredicate();
+            query.where(predicate);
+        }
+        // Sort
+        Pattern pattern = Pattern.compile(SORT_BY_VALID);
+        if (StringUtils.hasLength(sortBy)) {
+            Matcher matcher = pattern.matcher(sortBy);
+            if (matcher.find()) {
+                String fieldName = matcher.group(1);
+                String direction = matcher.group(3);
+                if (direction.equalsIgnoreCase("asc")) {
+                    query.orderBy(criteriaBuilder.asc(root.get(fieldName)));
+                } else {
+                    query.orderBy(criteriaBuilder.desc(root.get(fieldName)));
+                }
+            }
+        }
+        return this.entityManager.createQuery(query).setFirstResult(pageNo).setMaxResults(pageSize).getResultList();
+    }
+
+    /**
+     * @param criteriaList
+     * @param address
+     * @return
+     */
+    private Long getTotalElements(List<SearchCriteria> criteriaList, String address) {
+        log.info("-------------- Get Total Elements --------------");
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
+        Root<User> root = query.from(User.class);
+
+        // Handling search conditions
+        Predicate predicate = criteriaBuilder.conjunction();
+        UserSearchQueryCriteriaConsumer queryCustomer = new UserSearchQueryCriteriaConsumer(predicate, criteriaBuilder, root);
+
+        if (StringUtils.hasLength(address)) {
+            Join<Address, User> addressUserJoin = root.join("addresses");
+            Predicate addressPredicate = criteriaBuilder.like(addressUserJoin.get("city"), "%" + address + "%");
+            // find all field of address ???
+            query.select(criteriaBuilder.count(root));
+            query.where(predicate, addressPredicate);
+        } else {
+            criteriaList.forEach(queryCustomer);
+            predicate = queryCustomer.getPredicate();
+            query.select(criteriaBuilder.count(root));
+            query.where(predicate);
+        }
+        return this.entityManager.createQuery(query).getSingleResult();
     }
 }

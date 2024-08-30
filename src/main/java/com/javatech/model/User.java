@@ -1,5 +1,6 @@
 package com.javatech.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -58,6 +59,7 @@ public class User extends AbstractEntity {
     @Column(name = "type", nullable = false)
     private String type;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     private Set<Address> addresses = new HashSet<>();
 
