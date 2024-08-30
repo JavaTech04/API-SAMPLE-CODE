@@ -148,6 +148,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public PageResponse<?> getAllUsersWithSortBy(int pageNo, int pageSize, String sortBy) {
+        int page = 0;
+        if (pageNo > 0) {
+            page = pageNo - 1;
+        }
         List<Sort.Order> orders = new ArrayList<>();
         if (StringUtils.hasLength(sortBy)) {
             // firstName:asc|desc
@@ -161,7 +165,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
-        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(orders));
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(orders));
         Page<User> user = this.userRepository.findAll(pageable);
         return converToPageResponse(user, pageable);
 
@@ -175,6 +179,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public PageResponse<?> getAllUsersWithSortByMultipleColumns(int pageNo, int pageSize, String... sorts) {
+        int page = 0;
+        if (pageNo > 0) {
+            page = pageNo - 1;
+        }
         List<Sort.Order> orders = new ArrayList<>();
 
         for (String sortBy : sorts) {
@@ -189,7 +197,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
-        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(orders));
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(orders));
         Page<User> user = this.userRepository.findAll(pageable);
         return converToPageResponse(user, pageable);
     }

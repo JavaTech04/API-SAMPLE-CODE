@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 public class UserSearchQueryCriteriaConsumer implements Consumer<SearchCriteria> {
     private Predicate predicate;
     private CriteriaBuilder builder;
-    private Root root;
+    private Root<?> root;
 
     @Override
     public void accept(SearchCriteria searchCriteria) {

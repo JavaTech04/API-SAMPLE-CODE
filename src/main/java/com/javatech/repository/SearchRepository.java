@@ -8,6 +8,7 @@ import com.javatech.repository.criteria.UserSearchQueryCriteriaConsumer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -106,12 +107,17 @@ public class SearchRepository {
      */
     public PageResponse<?> searchUserByCriteria(int pageNo, int pageSize, String sortBy, String address, String... search) {
         log.info("Search user with search={} and sortBy={}", search, sortBy);
-        // firstName:T, lastName:T
-
+        if(pageNo == 0){
+            pageNo = 1;
+        }
+        Pattern pattern = null;
+        // User: firstName:T, lastName:T
+        // Address: city:T, floor:T
         List<SearchCriteria> criteriaList = new ArrayList<>();
+        SearchCriteria criteriaAddress = null;
         // Get list of users
         if (search.length > 0) {
-            Pattern pattern = Pattern.compile(SEARCH_OPERATOR);
+            pattern = Pattern.compile(SEARCH_OPERATOR);
             for (String s : search) {
                 // firstName:value
                 Matcher matcher = pattern.matcher(s);
@@ -120,16 +126,28 @@ public class SearchRepository {
                 }
             }
         }
-        // Count users
-        List<User> user = getUsers(pageNo, pageSize, criteriaList, sortBy, address);
 
-        Long totalElements = getTotalElements(criteriaList, address);
+        if (StringUtils.hasLength(address)) {
+            // city:value
+            pattern = Pattern.compile(SEARCH_OPERATOR);
+            Matcher matcher = pattern.matcher(address);
+            if (matcher.find()) {
+                criteriaAddress = new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3));
+                System.out.println(criteriaAddress.getOperation());
+            }
+        }
+        // Count users
+        List<User> user = getUsers(pageNo, pageSize, criteriaList, sortBy, criteriaAddress);
+
+        Long totalElements = getTotalElements(criteriaList, criteriaAddress);
+
+        Page<User> page = new PageImpl<>(user, PageRequest.of((pageNo - 1), pageSize), totalElements);
 
         return PageResponse.builder()
                 .page(pageNo)
                 .size(pageSize)
-                .totalPages(totalElements.intValue())
-                .items(user)
+                .totalPages(page.getTotalPages())
+                .items(page.getContent())
                 .build();
     }
 
@@ -138,10 +156,10 @@ public class SearchRepository {
      * @param pageSize
      * @param criteriaList
      * @param sortBy
-     * @param address
+     * @param criteriaAddress
      * @return
      */
-    private List<User> getUsers(int pageNo, int pageSize, List<SearchCriteria> criteriaList, String sortBy, String address) {
+    private List<User> getUsers(int pageNo, int pageSize, List<SearchCriteria> criteriaList, String sortBy, SearchCriteria criteriaAddress) {
         log.info("-------------- Get Users --------------");
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> query = criteriaBuilder.createQuery(User.class);
@@ -149,11 +167,14 @@ public class SearchRepository {
         // Handling search conditions
         Predicate predicate = criteriaBuilder.conjunction();
         UserSearchQueryCriteriaConsumer queryCustomer = new UserSearchQueryCriteriaConsumer(predicate, criteriaBuilder, root);
-        if (StringUtils.hasLength(address)) {
+        if (criteriaAddress != null) {
             Join<Address, User> addressUserJoin = root.join("addresses");
-            Predicate addressPredicate = criteriaBuilder.like(addressUserJoin.get("city"), "%" + address + "%");
+            Predicate addressPredicate = criteriaBuilder.like(addressUserJoin.get(criteriaAddress.getKey()), "%" + criteriaAddress.getValue() + "%");
+            if (!criteriaList.isEmpty()) {
+                criteriaList.forEach(queryCustomer);
+                predicate = queryCustomer.getPredicate();
+            }
             query.where(predicate, addressPredicate);
-            // find all field of address ???
         } else {
             criteriaList.forEach(queryCustomer);
             predicate = queryCustomer.getPredicate();
@@ -173,15 +194,15 @@ public class SearchRepository {
                 }
             }
         }
-        return this.entityManager.createQuery(query).setFirstResult(pageNo).setMaxResults(pageSize).getResultList();
+        return this.entityManager.createQuery(query).setFirstResult((pageNo - 1) * pageSize).setMaxResults(pageSize).getResultList();
     }
 
     /**
      * @param criteriaList
-     * @param address
+     * @param criteriaAddress
      * @return
      */
-    private Long getTotalElements(List<SearchCriteria> criteriaList, String address) {
+    private Long getTotalElements(List<SearchCriteria> criteriaList, SearchCriteria criteriaAddress) {
         log.info("-------------- Get Total Elements --------------");
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
@@ -191,10 +212,13 @@ public class SearchRepository {
         Predicate predicate = criteriaBuilder.conjunction();
         UserSearchQueryCriteriaConsumer queryCustomer = new UserSearchQueryCriteriaConsumer(predicate, criteriaBuilder, root);
 
-        if (StringUtils.hasLength(address)) {
+        if (criteriaAddress != null) {
             Join<Address, User> addressUserJoin = root.join("addresses");
-            Predicate addressPredicate = criteriaBuilder.like(addressUserJoin.get("city"), "%" + address + "%");
-            // find all field of address ???
+            Predicate addressPredicate = criteriaBuilder.like(addressUserJoin.get(criteriaAddress.getKey()), "%" + criteriaAddress.getValue() + "%");
+            if (!criteriaList.isEmpty()) {
+                criteriaList.forEach(queryCustomer);
+                predicate = queryCustomer.getPredicate();
+            }
             query.select(criteriaBuilder.count(root));
             query.where(predicate, addressPredicate);
         } else {
