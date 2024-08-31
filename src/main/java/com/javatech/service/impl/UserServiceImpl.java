@@ -5,16 +5,19 @@ import com.javatech.dto.response.*;
 import com.javatech.exception.ResourceNotFoundException;
 import com.javatech.model.*;
 import com.javatech.repository.*;
+import com.javatech.repository.specification.UserSpecificationsBuilder;
 import com.javatech.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.regex.*;
 
+import static com.javatech.utils.AppConst.SEARCH_SPEC_OPERATOR;
 import static com.javatech.utils.AppConst.SORT_BY;
 
 @Service
@@ -218,6 +221,31 @@ public class UserServiceImpl implements UserService {
     public PageResponse<?> advanceSearchWithCriteria(int pageNo, int pageSize, String sortBy, String address, String... search) {
         return this.repository.searchUserByCriteria(pageNo, pageSize, sortBy, address, search);
     }
+
+    @Override
+    public PageResponse<?> advanceSearchWithSpecifications(Pageable pageable, String[] user, String[] address) {
+        log.info("====================== getUsersBySpecifications ======================");
+        if (user != null && address != null) {
+            // Search on user and address => join table
+//            1.12.45
+
+
+        } else if (user != null) {
+            // Search on user => no join
+            UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
+            Pattern pattern = Pattern.compile(SEARCH_SPEC_OPERATOR);
+            for (String s : user) {
+                Matcher matcher = pattern.matcher(s);
+                if (matcher.find()) {
+                    builder.with(matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(3), matcher.group(5));
+                }
+            }
+            Page<User> users = userRepository.findAll(Objects.requireNonNull(builder.build()), pageable);
+            return converToPageResponse(users, pageable);
+        }
+        return converToPageResponse(this.userRepository.findAll(pageable), pageable);
+    }
+
 
     /**
      * @param user

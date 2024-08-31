@@ -229,4 +229,5 @@ public class SearchRepository {
         }
         return this.entityManager.createQuery(query).getSingleResult();
     }
+
 }

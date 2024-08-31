@@ -3,6 +3,7 @@ package com.javatech.service;
 import com.javatech.dto.requests.UserRequestDTO;
 import com.javatech.dto.response.PageResponse;
 import com.javatech.dto.response.UserDetailResponse;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
@@ -23,4 +24,6 @@ public interface UserService {
     PageResponse<?> getAllUsersAndSearchWithPagingAndSorting(int pageNo, int pageSize, String search, String sortBy);
 
     PageResponse<?> advanceSearchWithCriteria(int pageNo, int pageSize, String sortBy, String address, String... search);
+
+    PageResponse<?> advanceSearchWithSpecifications(Pageable pageable, String[] user, String[] address);
 }
