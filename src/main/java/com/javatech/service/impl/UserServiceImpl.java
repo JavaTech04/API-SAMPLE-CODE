@@ -227,8 +227,7 @@ public class UserServiceImpl implements UserService {
         log.info("====================== getUsersBySpecifications ======================");
         if (user != null && address != null) {
             // Search on user and address => join table
-//            1.12.45
-
+            return repository.searchUserByCriteriaWithJoin(pageable, user, address);
 
         } else if (user != null) {
             // Search on user => no join
