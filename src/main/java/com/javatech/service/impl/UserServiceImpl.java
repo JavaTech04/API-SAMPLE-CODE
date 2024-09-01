@@ -77,8 +77,7 @@ public class UserServiceImpl implements UserService {
         user.setDateOfBirth(request.getDateOfBirth());
         user.setGender(request.getGender());
         user.setPhone(request.getPhone());
-        if (!request.getEmail().equals(user.getEmail())) {
-            // check email from database if not exist then allow update email otherwise throw exception
+        if (!request.getEmail().equals(user.getEmail())) { // check email from database if not exist then allow update email otherwise throw exception
             user.setEmail(request.getEmail());
         }
         user.setUsername(request.getUsername());
@@ -225,12 +224,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public PageResponse<?> advanceSearchWithSpecifications(Pageable pageable, String[] user, String[] address) {
         log.info("====================== getUsersBySpecifications ======================");
-        if (user != null && address != null) {
-            // Search on user and address => join table
+        if (user != null && address != null) { // Search on user and address => join table
             return repository.searchUserByCriteriaWithJoin(pageable, user, address);
-
-        } else if (user != null) {
-            // Search on user => no join
+        } else if (user != null) { // Search on user => no join
             UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
             Pattern pattern = Pattern.compile(SEARCH_SPEC_OPERATOR);
             for (String s : user) {

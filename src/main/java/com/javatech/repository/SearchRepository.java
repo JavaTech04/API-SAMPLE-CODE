@@ -9,7 +9,6 @@ import com.javatech.repository.specification.SpecSearchCriteria;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -232,6 +231,15 @@ public class SearchRepository {
     }
 
 
+    /**
+     * The filter is not complete
+     * Code only simulates the execution model
+     *
+     * @param pageable
+     * @param user
+     * @param address
+     * @return
+     */
     public PageResponse<?> searchUserByCriteriaWithJoin(Pageable pageable, String[] user, String[] address) {
         log.info("-------------- searchUserByCriteriaWithJoin --------------");
 
@@ -259,8 +267,8 @@ public class SearchRepository {
             }
         }
 
-        Predicate userPre = builder.and(userPreList.toArray(new Predicate[0]));
-        Predicate addPre = builder.and(addressPreList.toArray(new Predicate[0]));
+        Predicate userPre = builder.or(userPreList.toArray(new Predicate[0]));
+        Predicate addPre = builder.or(addressPreList.toArray(new Predicate[0]));
         Predicate finalPre = builder.and(userPre, addPre);
 
         query.where(finalPre);
@@ -280,6 +288,12 @@ public class SearchRepository {
                 .build();
     }
 
+    /**
+     * @param root
+     * @param builder
+     * @param criteria
+     * @return
+     */
     private Predicate toUserPredicate(Root<User> root, CriteriaBuilder builder, SpecSearchCriteria criteria) {
         log.info("-------------- toUserPredicate --------------");
         return switch (criteria.getOperation()) {
@@ -294,6 +308,12 @@ public class SearchRepository {
         };
     }
 
+    /**
+     * @param root
+     * @param builder
+     * @param criteria
+     * @return
+     */
     private Predicate toAddressPredicate(Join<Address, User> root, CriteriaBuilder builder, SpecSearchCriteria criteria) {
         log.info("-------------- toAddressPredicate --------------");
         return switch (criteria.getOperation()) {
@@ -308,6 +328,11 @@ public class SearchRepository {
         };
     }
 
+    /**
+     * @param user
+     * @param address
+     * @return
+     */
     private long countUserJoinAddress(String[] user, String[] address) {
         log.info("-------------- countUserJoinAddress --------------");
 

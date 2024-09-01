@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 
@@ -157,6 +158,8 @@ public class UserController {
      * @param search
      * @param sortBy
      * @return
+     * @ Spring Data JPA - Customize Query
+     * @ jYbppQmNnO0?si=pDPSyf362e28UpdT
      */
     @Operation(summary = "Get list of users and search with paging and sorting by customize query", description = "Send a request via this API to get user list by pageNo, pageSize and sort by multiple column")
     @GetMapping("/list-user-and-search-with-paging-and-sorting")
@@ -170,6 +173,16 @@ public class UserController {
         return new ResponseData<>(HttpStatus.OK.value(), "Request get user successfully", this.userService.getAllUsersAndSearchWithPagingAndSorting(pageNo, pageSize, search, sortBy));
     }
 
+    /**
+     * @param pageNo
+     * @param pageSize
+     * @param sortBy
+     * @param address
+     * @param search
+     * @return
+     * @ Spring Data JPA - Criteria
+     * @ SGMKy_DCUOM?si=7qe8nBrW-eEww__N
+     */
     @Operation(summary = "Advance search query by criteria", description = "Send a request via this API to get user list by pageNo, pageSize and sort by multiple column")
     @GetMapping("/advance-search-with-criteria")
     public ResponseData<?> advanceSearchWithCriteria(
@@ -182,6 +195,15 @@ public class UserController {
         return new ResponseData<>(HttpStatus.OK.value(), "users", userService.advanceSearchWithCriteria(pageNo, pageSize, sortBy, address, search));
     }
 
+    /**
+     * ============BUG==========
+     * @param pageable
+     * @param user
+     * @param address
+     * @return
+     * @ Spring Data JPA - Specification
+     * @ 4pwWsOu5OKc?si=GkSWIoZqKubkoPMt
+     */
     @Operation(summary = "Advance search query by specifications", description = "Return list of users")
     @GetMapping(path = "/advance-search-with-specification", produces = APPLICATION_JSON_VALUE)
     public ResponseData<?> advanceSearchWithSpecifications(Pageable pageable,
