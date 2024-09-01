@@ -25,7 +25,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends AbstractEntity {
+public class User extends AbstractEntity<Long> {
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
