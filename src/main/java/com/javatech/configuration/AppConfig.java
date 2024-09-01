@@ -34,7 +34,7 @@ public class AppConfig {
 
     private final UserService userService;
 
-    private String[] WHITE_LIST = {"/auth/**"};
+    private final String[] WHITE_LIST = {"/auth/**"};
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {

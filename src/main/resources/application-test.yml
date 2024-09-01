@@ -15,6 +15,11 @@ spring:
   config:
     activate:
       on-profile: test
+jwt:
+  expiryHour: 1
+  expiryDay: 14
+  secretKey: b0238cff00a72de79bebabb5b5d6a777ff4b5f0401e6518ea03d48262f4bd818
+  refreshKey: 9106746cb1d349b31174dda29c2729d3448d9b8a57418cc1833c8478f0763980
 openapi:
   service:
     api-docs: api-service

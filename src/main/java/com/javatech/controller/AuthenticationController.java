@@ -31,7 +31,7 @@ public class AuthenticationController {
     /**
      * @param request {'username': 'your_username', 'password': 'your_password', 'platform': 'WEB|ANDROID|IOS', 'deviceToken': 'your_deviceToken', 'version': 'your_version'}
      */
-    @Operation(summary = "Login", description = "Enter a valid username and password to generate the access_token and refresh_token used to log in")
+    @Operation(summary = "Access token", description = "Enter a valid username and password to generate the access_token and refresh_token used to log in")
     @PostMapping("/access")
     public ResponseEntity<TokenResponse> access(@RequestBody SignInRequest request) {
         return ResponseEntity.ok(this.authenticationService.authenticate(request));
@@ -40,7 +40,7 @@ public class AuthenticationController {
     /**
      * @param request Header: x-token
      */
-    @Operation(summary = "Refresh", description = "Receives a refresh_token and refreshes the access_token")
+    @Operation(summary = "Refresh token", description = "Receives a refresh_token and refreshes the access_token")
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(HttpServletRequest request) {
         return ResponseEntity.ok(this.authenticationService.refresh(request));
