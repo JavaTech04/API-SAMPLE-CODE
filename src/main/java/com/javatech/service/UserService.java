@@ -4,8 +4,11 @@ import com.javatech.dto.requests.UserRequestDTO;
 import com.javatech.dto.response.PageResponse;
 import com.javatech.dto.response.UserDetailResponse;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService {
+
+    UserDetailsService userDetailsService();
 
     long saveUser(UserRequestDTO request);
 
