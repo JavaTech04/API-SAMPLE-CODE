@@ -15,8 +15,8 @@ import java.util.List;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
-    @Query(value = "SELECT u FROM User u INNER JOIN Address a ON u.id = a.user.id WHERE a.city=:city")
-    List<User> getAllUser(String city);
+//    @Query(value = "SELECT u FROM User u INNER JOIN Address a ON u.id = a.user.id WHERE a.city=:city")
+//    List<User> getAllUser(String city);
 
     // -- Distinct --
     // @Query(value = "select distinct from User u where u.firstName=:firstName and u.lastName=:lastName")
@@ -24,87 +24,87 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     // -- Single field --
     //  @Query(value = "select * from User u where u.email= ?1")
-    List<User> findByEmail(String email);
+//    List<User> findByEmail(String email);
 
     // -- OR --
     //  @Query(value = "select * from User u where u.firstName=:name or u.lastName:name")
-    List<User> findByFirstNameOrLastName(String name);
+//    List<User> findByFirstNameOrLastName(String name);
 
     // -- Is, Equals --
     //@Query(value = "select * from User u where u.firstName=:name")
-    List<User> findByFirstNameIs(String name);
+//    List<User> findByFirstNameIs(String name);
 
-    List<User> findByFirstNameEquals(String name);
+//    List<User> findByFirstNameEquals(String name);
 
-    List<User> findByFirstName(String name);
+//    List<User> findByFirstName(String name);
 
     // -- Between --
     // @Query(value = "select * from User u where u.createdAt between ?1 and 2?")
-    List<User> findByCreatedAtBetween(Date startDate, Date endDate);
+//    List<User> findByCreatedAtBetween(Date startDate, Date endDate);
 
     // LessThan
     //@Query(value = "select * from User u where u.age < :age")
-    List<User> findByAgeLessThan(int age);
-    List<User> findByAgeLessThanEquals();
-    List<User> findByAgeGreaterThan();
-    List<User> findByAgeGreaterThanEquals();
+//    List<User> findByAgeLessThan(int age);
+//    List<User> findByAgeLessThanEquals();
+//    List<User> findByAgeGreaterThan();
+//    List<User> findByAgeGreaterThanEquals();
 
     // Before va After
     //@Query(value = "select * from User u where u.createdAt < :date")
-    List<User> findByCreatedAtBefore(Date date);
-    List<User> findByCreatedAtAfter(Date date);
+//    List<User> findByCreatedAtBefore(Date date);
+//    List<User> findByCreatedAtAfter(Date date);
 
     // IsNull, Null
     // @Query(value = "select * from User u where u.age is null")
-    List<User> findByAgeIsNull();
+//    List<User> findByAgeIsNull();
 
     // NotNull, IsNotNull
     // @Query(value = "select * from User u where u.age is not null")
-    List<User> findByAgeNotNull();
+//    List<User> findByAgeNotNull();
 
     // Like
     //@Query(value = "select * from User u where u.lastName like %:lastName%")
-    List<User> findByLastNameLike(String lastName);
+//    List<User> findByLastNameLike(String lastName);
 
     // @Query(value = "select * from User u where u.firstName not like %:lastName%")
-    List<User> findByLastNameNotLike(String lastName);
+//    List<User> findByLastNameNotLike(String lastName);
 
     // StartingWith
     //@Query(value = "select * from User u where u.lastName not like :lastName%")
-    List<User> findByLastNameStartingWith(String lastName);
+//    List<User> findByLastNameStartingWith(String lastName);
 
     // EndingWith
     // @Query(value = "select * from User u where u.lastName not like %:lastName")
-    List<User> findByLastNameEndingWith(String lastName);
+//    List<User> findByLastNameEndingWith(String lastName);
 
     // Containing
     //@Query(value = "select * from User u where u.lastName not like %:lastName%")
-    List<User> findByLastNameContaining(String name);
+//    List<User> findByLastNameContaining(String name);
 
     // Not
     // @Query(value = "select * from User u where u.lastName <> :name")
-    List<User> findByLastNameNot(String name);
+//    List<User> findByLastNameNot(String name);
 
     // In
     // @Query(value = "select * from User u where u.age in (18,25,30)")
-    List<User> findByAgeIn(Collection<Integer> ages);
+//    List<User> findByAgeIn(Collection<Integer> ages);
 
     // Not in
     //@Query(value = "select * from User u where u.age not in (18,25,30)")
-    List<User> findByAgeNotIn(Collection<Integer> ages);
+//    List<User> findByAgeNotIn(Collection<Integer> ages);
 
     // True/False
     //@Query(value = "select * from User u where u.activated=true")
-    List<User> findByActivatedTrue();
-    List<User> findByActivatedFalse();
+//    List<User> findByActivatedTrue();
+//    List<User> findByActivatedFalse();
 
     // IgnoreCase
     // @Query(value = "select * from User u where LOWER(u.lastName) <> LOWER(:name)")
-    List<User> findByFirstNameIgnoreCase(String name);
+//    List<User> findByFirstNameIgnoreCase(String name);
 
     // order by
-    List<User> findByFirstNameOrderByCreatedAtDesc(String name);
+//    List<User> findByFirstNameOrderByCreatedAtDesc(String name);
 
     //
-    List<User> findByFirstNameAndLastNameAllIgnoreCase(String firstName, String lastName);
+//    List<User> findByFirstNameAndLastNameAllIgnoreCase(String firstName, String lastName);
 }

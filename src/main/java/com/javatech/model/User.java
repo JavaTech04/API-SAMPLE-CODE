@@ -48,7 +48,6 @@ public class User extends AbstractEntity<Long> {
     @Column(name = "username", nullable = false)
     private String username;
 
-
     @NotNull
     @Column(name = "password", nullable = false)
     private String password;
@@ -62,6 +61,12 @@ public class User extends AbstractEntity<Long> {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     private Set<Address> addresses = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserHasRole> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<GroupHasUser> groups = new HashSet<>();
 
     public void saveAddress(Address address) {
         if (address != null) {
