@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- *  Spring Data JPA - Query Method - s1MJbIfBI_0?si=rzTw2CU636APHwbG
+ * Spring Data JPA - Query Method - s1MJbIfBI_0?si=rzTw2CU636APHwbG
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {

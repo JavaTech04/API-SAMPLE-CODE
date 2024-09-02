@@ -40,6 +40,16 @@ public class UserServiceImpl implements UserService {
         return username -> userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
+    @Override
+    public User getByUsername(String userName) {
+        return userRepository.findByUsername(userName).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Email not found"));
+    }
+
     /**
      * @param request
      * @return
@@ -73,6 +83,11 @@ public class UserServiceImpl implements UserService {
         this.userRepository.save(user);
         log.info("User has save!");
         return user.getId();
+    }
+
+    @Override
+    public long saveUser(User user) {
+        return this.userRepository.save(user).getId();
     }
 
     /**

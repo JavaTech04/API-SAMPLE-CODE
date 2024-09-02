@@ -1,11 +1,13 @@
 package com.javatech.controller;
 
+import com.javatech.dto.requests.ResetPasswordDTO;
 import com.javatech.dto.requests.SignInRequest;
 import com.javatech.dto.response.TokenResponse;
 import com.javatech.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.http.HttpStatus.OK;
 
 /**
  * Handle auth
@@ -53,5 +57,20 @@ public class AuthenticationController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         return ResponseEntity.ok(this.authenticationService.logout(request));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody String email) {
+        return new ResponseEntity<>(authenticationService.forgotPassword(email), OK);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody String secretKey) {
+        return new ResponseEntity<>(authenticationService.resetPassword(secretKey), OK);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody @Valid ResetPasswordDTO request) {
+        return new ResponseEntity<>(authenticationService.changePassword(request), OK);
     }
 }

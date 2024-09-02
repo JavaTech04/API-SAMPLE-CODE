@@ -3,6 +3,7 @@ package com.javatech.service;
 import com.javatech.dto.requests.UserRequestDTO;
 import com.javatech.dto.response.PageResponse;
 import com.javatech.dto.response.UserDetailResponse;
+import com.javatech.model.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -10,7 +11,13 @@ public interface UserService {
 
     UserDetailsService userDetailsService();
 
+    User getByUsername(String userName);
+
+    User getUserByEmail(String email);
+
     long saveUser(UserRequestDTO request);
+
+    long saveUser(User user);
 
     void updateUser(long userId, UserRequestDTO request);
 

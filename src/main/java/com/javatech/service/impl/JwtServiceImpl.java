@@ -16,8 +16,7 @@ import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
 
-import static com.javatech.utils.TokenType.ACCESS_TOKEN;
-import static com.javatech.utils.TokenType.REFRESH_TOKEN;
+import static com.javatech.utils.TokenType.*;
 
 @Service
 @Profile("!prod")
@@ -64,6 +63,7 @@ public class JwtServiceImpl implements JwtService {
         return generateRefreshToken(new HashMap<>(), user) ;
     }
 
+
     private String generateRefreshToken(Map<String, Object> claims, UserDetails userDetails) {
         return Jwts.builder()
                 .setClaims(claims)
@@ -71,6 +71,21 @@ public class JwtServiceImpl implements JwtService {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * expiryDay))
                 .signWith(getKey(REFRESH_TOKEN), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    @Override
+    public String generateResetToken(UserDetails user) {
+        return generateResetToken(new HashMap<>(), user);
+    }
+
+    private String generateResetToken(Map<String, Object> claims, UserDetails userDetails) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .signWith(getKey(RESET_TOKEN), SignatureAlgorithm.HS256)
                 .compact();
     }
 
