@@ -6,6 +6,7 @@ ________________DOCKER________________
     - docker build -t image_name .
     - docker run -it -p 80:8080|8081|8082 --name=container_name image_name
 2. Docker compose
+    - -v is remove bold container and image
     - docker-compose up -d || docker-compose up -d profile_name
     - remove: docker-compose down -v
     - log: docker-compose logs -tf api-service

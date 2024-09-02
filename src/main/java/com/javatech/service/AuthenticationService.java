@@ -4,6 +4,7 @@ import com.javatech.dto.requests.ResetPasswordDTO;
 import com.javatech.dto.requests.SignInRequest;
 import com.javatech.dto.response.TokenResponse;
 import com.javatech.exception.InvalidDataException;
+import com.javatech.model.RedisToken;
 import com.javatech.model.Token;
 import com.javatech.model.User;
 import com.javatech.repository.UserRepository;
@@ -37,6 +38,8 @@ public class AuthenticationService {
 
     private final TokenService tokenService;
 
+    private final RedisTokenService redisTokenService;
+
     private final PasswordEncoder passwordEncoder;
 
     private final UserService userService;
@@ -50,6 +53,8 @@ public class AuthenticationService {
 
         //Save token to db
         this.tokenService.save(Token.builder().username(user.getUsername()).accessToken(accessToken).refreshToken(refresh_token).build());
+        //Save to redis
+        this.redisTokenService.save(RedisToken.builder().id(user.getUsername()).accessToken(accessToken).refreshToken(refresh_token).build());
 
         return TokenResponse.builder()
                 .accessToken(accessToken)
@@ -75,6 +80,8 @@ public class AuthenticationService {
 
         //Save token to db
         this.tokenService.save(Token.builder().username(username).accessToken(access_token).refreshToken(refresh_token).build());
+        //Save to redis
+        this.redisTokenService.save(RedisToken.builder().id(user.get().getUsername()).accessToken(access_token).refreshToken(refresh_token).build());
         return TokenResponse.builder()
                 .accessToken(access_token)
                 .refreshToken(refresh_token)
@@ -94,6 +101,8 @@ public class AuthenticationService {
         Token currentToken = this.tokenService.getByUsername(username);
         // Delete token permanent
         this.tokenService.delete(currentToken);
+        // Delete redis token
+        this.redisTokenService.remove(username);
         return "Logout successful";
     }
 
@@ -110,6 +119,10 @@ public class AuthenticationService {
         }
         // generate reset token
         String reset_token = this.jwtService.generateResetToken(user);
+        //Save to db
+        this.tokenService.save(Token.builder().username(user.getUsername()).refreshToken(reset_token).build());
+        //Save to redis
+        this.redisTokenService.save(RedisToken.builder().id(user.getUsername()).resetToken(reset_token).build());
         // TODO send email to user
         String confirmLink = String.format("curl --location 'http://localhost:2004/auth/reset-password' \\\n" +
                 "--header 'accept: */*' \\\n" +
@@ -129,6 +142,7 @@ public class AuthenticationService {
     public String resetPassword(String secretKey) {
         log.info("========== resetPassword ==========");
         isValidUserByToken(secretKey);
+
         return "Confirm url...";
     }
 
@@ -145,6 +159,10 @@ public class AuthenticationService {
     private User isValidUserByToken(String secretKey) {
         final String username = this.jwtService.extractUsername(secretKey, RESET_TOKEN);
         var user = this.userRepository.findByUsername(username);
+
+        // check token in redis
+        redisTokenService.isExists(username);
+
         if (!user.get().isEnabled()) {
             throw new InvalidDataException("User is not enabled!");
         }
