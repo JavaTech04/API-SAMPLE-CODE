@@ -1,6 +1,7 @@
 package com.javatech.service.impl;
 
 
+import com.javatech.exception.InvalidDataException;
 import com.javatech.service.JwtService;
 import com.javatech.utils.TokenType;
 import io.jsonwebtoken.*;
@@ -16,6 +17,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static com.javatech.utils.TokenType.ACCESS_TOKEN;
+import static com.javatech.utils.TokenType.REFRESH_TOKEN;
 
 @Service
 @Profile("!prod")
@@ -33,6 +35,12 @@ public class JwtServiceImpl implements JwtService {
     @Value("${jwt.refreshKey}")
     private String refreshKey;
 
+    @Value("${jwt.resetKey}")
+    private String resetKey;
+
+    /**
+     * generate access token
+     */
     @Override
     public String generateToken(UserDetails user) {
         return generateToken(new HashMap<>(), user);
@@ -53,17 +61,32 @@ public class JwtServiceImpl implements JwtService {
      */
     @Override
     public String generateRefreshToken(UserDetails user) {
-        return "";
+        return generateRefreshToken(new HashMap<>(), user) ;
+    }
+
+    private String generateRefreshToken(Map<String, Object> claims, UserDetails userDetails) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * expiryDay))
+                .signWith(getKey(REFRESH_TOKEN), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     private Key getKey(TokenType type) {
-        byte[] keyBytes;
-        if (ACCESS_TOKEN.equals(type)) {
-            keyBytes = Decoders.BASE64.decode(this.secretKey);
-        } else {
-            keyBytes = Decoders.BASE64.decode(this.refreshKey);
+        switch (type) {
+            case ACCESS_TOKEN -> {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(this.secretKey));
+            }
+            case REFRESH_TOKEN -> {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(this.refreshKey));
+            }
+            case RESET_TOKEN -> {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(this.resetKey));
+            }
+            default -> throw new InvalidDataException("Invalid token type");
         }
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     /**

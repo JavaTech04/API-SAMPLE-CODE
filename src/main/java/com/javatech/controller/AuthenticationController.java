@@ -38,7 +38,7 @@ public class AuthenticationController {
     }
 
     /**
-     * @param request Header: x-token
+     * @param request Header: Authorization
      */
     @Operation(summary = "Refresh token", description = "Receives a refresh_token and refreshes the access_token")
     @PostMapping("/refresh")
@@ -47,7 +47,7 @@ public class AuthenticationController {
     }
 
     /**
-     * @param request Header: x-token
+     * @param request Header: Authorization
      */
     @Operation(summary = "Logout", description = "Receives a refresh_token and remove access_token from database")
     @PostMapping("/logout")

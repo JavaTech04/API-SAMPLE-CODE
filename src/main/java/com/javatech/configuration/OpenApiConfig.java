@@ -41,14 +41,12 @@ public class OpenApiConfig {
                         .description(description)
                         .license(new License().name("Apache 2.0").url("https://facebook.com/NongHoangVu04")))
                 .servers(List.of(new Server().url(serverUrl).description(serverName)))
-                ;
-
-        // Security - Optional
-//                .components(new Components().addSecuritySchemes(
-//                        "bearerAuth",
-//                        new SecurityScheme().type(SecurityScheme.Type.HTTP)
-//                                .scheme("bearer")
-//                                .bearerFormat("JWT")))
-//                .security(List.of(new SecurityRequirement().addList("bearerAuth")));
+                // Security - Optional
+                .components(new Components().addSecuritySchemes(
+                        "bearerAuth",
+                        new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")))
+                .security(List.of(new SecurityRequirement().addList("bearerAuth")));
     }
 }
